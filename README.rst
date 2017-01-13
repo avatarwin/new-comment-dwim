@@ -1,8 +1,6 @@
 new-comment-dwim.el
 -------------------
 
-Copyright 2017 Nicola Archibald.
-
 About
 =====
 
@@ -54,3 +52,6 @@ License
 
 This code is released under a BSD 2-clause license.
 `See BSD 2-clause License at opensource.org <https://opensource.org/licenses/BSD-2-Clause>`_
+
+Copyright 2017 Nicola Archibald.
+
