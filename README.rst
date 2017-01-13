@@ -22,6 +22,7 @@ functions, either globally if all you use is lispy languages, or within a mode-h
 
 e.g:
 
+.. code:: elisp
     (defun my/new-commenting ()
        (local-set-key (kbd "M-;") 'ns/comment-insert)
        (local-set-key (kbd "M-j") 'ns/comment-newline))
@@ -50,4 +51,5 @@ License
 =======
 
 This code is released under a BSD 2-clause license.
-[See BSD 2-clause License at opensource.org](https://opensource.org/licenses/BSD-2-Clause)
+`See BSD 2-clause License at opensource.org`_.
+.. https://opensource.org/licenses/BSD-2-Clause)
