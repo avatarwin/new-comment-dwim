@@ -1,6 +1,8 @@
 ;;; More complex/complete comment-dwim like behaviour
 ;;; =================================================
 ;;;
+;;; Copyright 2017 Nicola Archibald
+;;; 
 ;;; Binding M-; to ns/comment-insert and M-j to ns/comment-newline should be the most common
 ;;; use-case for this code.
 ;;;
@@ -14,12 +16,20 @@
 ;;;
 ;;;   The missing case of being able to promote a 3 semicolon comment into a 4 semicolon comment
 ;;;  when the 3 semicolon comment is part of a comment block at the start of the file. In
-;;; this situation the progression of semicolons should be a ring of [2->3->4]
+;;;  this situation the progression of semicolons should be a ring of [2->3->4]
+;;; 
+;;;   The code should be extended to work with 'all' programming languages by better recognising
+;;;  non-lispy comments and using the comment-leftpad/comment-rightpad/comment-start/comment-end
+;;;  facilities already present in emacs.
 ;;; 
 ;;; Changelog
 ;;; 
 ;;; 20170113     Version 0.1
-;;;              - Initial version             
+;;;              - Initial version
+;;; License
+;;; 
+;;; Released under the BSD 2-clause license, see https://opensource.org/licenses/BSD-2-Clause
+;;;
 
 (defun ns/extract-line ()
   "Extract a line as undecorated text"
