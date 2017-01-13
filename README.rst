@@ -6,9 +6,10 @@ Copyright 2017 Nicola Archibald.
 About
 =====
 
-The standard emacs `comment-dwim` can be somewhat disappointing, especially on lisp
-languages. Comment-dwim's docstring hints at a utopia where pressing M-; can switch
-between ;; and ;;; forms, along with automatically determining if you're in a comment
+The standard emacs ``comment-dwim`` command can be somewhat
+disappointing, especially on lisp languages. Comment-dwim's docstring
+hints at a utopia where pressing M-; can switch between ;; and ;;;
+forms, along with automatically determining if you're in a comment
 block, and handling the case of adding comments alongside code.
 
 This attempts to make reality a little closer to that utopia.
@@ -22,7 +23,8 @@ functions, either globally if all you use is lispy languages, or within a mode-h
 
 e.g:
 
-.. code:: elisp
+.. code:: emacs-lisp
+          
     (defun my/new-commenting ()
        (local-set-key (kbd "M-;") 'ns/comment-insert)
        (local-set-key (kbd "M-j") 'ns/comment-newline))
@@ -51,5 +53,4 @@ License
 =======
 
 This code is released under a BSD 2-clause license.
-`See BSD 2-clause License at opensource.org`_.
-.. https://opensource.org/licenses/BSD-2-Clause)
+`See BSD 2-clause License at opensource.org <https://opensource.org/licenses/BSD-2-Clause>`_
