@@ -39,18 +39,38 @@
     (let ((les (point)))
       (buffer-substring-no-properties les lep)))))
 
+(defun ns/kill-forward-whitespace ()
+  (while (= (following-char) 32)
+    (kill-forward-chars 1)))
+
+(defun ns/test-to-start ()
+  "look backwards from point to start of the buffer for lines that are inside a comment"
+  (save-excursion
+    (let ((is-comment 't)
+          (start-point (buffer-end -1)))
+      (while (and is-comment
+                  (> (point) start-point))
+        (forward-line -1)
+        (let ((line (string-trim (ns/extract-line))))
+          (setq is-comment (and (> (length line) 0) (string= ";" (substring line 0 1))))))
+      (and is-comment (= (point) start-point)))))
+
+
 (defun ns/eol-column ()
   "find the end of line column number"
   (save-excursion
     (end-of-line)
     (current-column)))
 
-(defun ns/in-comment ()
+(defun ns/in-comment (offset)
   "Return number of comment semicolons used on previous line, or nil if previous line was not a comment"
   (save-excursion
-    (beginning-of-line 0)
+    (beginning-of-line offset)
     (let ((trimmed (string-trim (ns/extract-line))))
-      (cond ((and (>= (length trimmed) 3)
+      (cond ((and (>= (length trimmed) 4)
+                  (string= (substring trimmed 0 4) ";;;;"))
+             4)
+            ((and (>= (length trimmed) 3)
                   (string= (substring trimmed 0 3) ";;;"))
              3)
             ((and (>= (length trimmed) 2)
@@ -62,10 +82,13 @@
             ('t
              nil)))))
 
+;;;###autoload
 (defun ns/comment-insert ()
   "Insert a comment with DWIM style functionality"
   (interactive)
-  (let* ((pcomment (ns/in-comment))
+  (let* ((start-block (ns/test-to-start))
+         (pcomment (ns/in-comment 0))
+         (tcomment (ns/in-comment nil))
          (line-contents (ns/extract-line))
          (trimmed (string-trim line-contents))
          (len (length trimmed))
@@ -79,26 +102,24 @@
             (save-excursion
               (beginning-of-line)
               (kill-forward-chars del)
+              (ns/kill-forward-whitespace)
               (funcall insert-basic add)))))
     (cond
      ((= len 0)                       ; line is empty, simplest case
-      (if pcomment
-          (funcall insert-basic pcomment)
-        (funcall insert-basic 2)))
-     ((string= ";;" trimmed)          ; line starts with 2 semicolons but no text - promote to 3 semicolons
+      (funcall insert-basic (or pcomment 2)))
+     ((equalp tcomment 2)
       (progn
-        (funcall delete-and-add 3 3)
+        (funcall delete-and-add 2 3)
         (end-of-line)))
-     ((and (> len 2)
-           (string= ";; " (substring trimmed 0 3)))
-      (funcall delete-and-add 3 3))
-     ((string= ";;;" trimmed)           ; line starts with 3 semicolons, demote to 2 semicolons
+     ((equalp tcomment 3)
       (progn
-        (funcall delete-and-add 4 2)
+        (if start-block
+            (funcall delete-and-add 3 4)
+          (funcall delete-and-add 3 2))
         (end-of-line)))
-     ((and (> len 3)                    ; 
-           (string= ";;; " (substring trimmed 0 4)))
-      (funcall delete-and-add 4 2))
+     ((equalp tcomment 4)
+      (funcall delete-and-add 4 2)
+      (end-of-line))
      ((string-match ";+ " line-contents)
       (move-to-column (match-end 0)))
      ((string-match ";+" line-contents)
@@ -113,9 +134,15 @@
         (funcall insert-basic 1)))      
      )))
 
+;;;###autoload
 (defun ns/comment-newline ()
   "Insert a newline, followed by a comment insert to match the previous line"
   (interactive)
   (newline)
   (ns/comment-insert))
+
+      
+          
+
+
 
