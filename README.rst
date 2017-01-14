@@ -39,13 +39,10 @@ Currently the code is very lisp-centric in a way that makes these functions unus
 non-lisp commenting styles, emacs's comment-dwim doesn't have this limitation, and it would be
 better if this didn't too.
 
-4-semicolon forms (usually used for top-of-file style comment regions) aren't currently addressed.
-
 If a semicolon exists inside code when trying to add an 'end of line' style comment, the functions
 currently get confused about where the insert point should be (it *should* insert a semicolon, space
 and position the cursor for writing a comment at the end of the line; currently it jumps the cursor
-to the existing semicolons, assuming it to be an existing comment. **it can also currently insert a
-space, which could break your use of semicolons in a string, be careful in this case**
+to the existing semicolons, assuming it to be an existing comment.
 
 License
 =======
