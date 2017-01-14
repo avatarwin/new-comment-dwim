@@ -8,7 +8,7 @@
 ;;;
 ;;; Known problems:
 ;;;   Currently behaviour is incorrect if semicolons exist on the line but are part of
-;;;  source code (ie, in a string)           
+;;;  source code (ie, in a string)
 ;;; 
 ;;;   The comment-insert behaviour should change on the presence of a universal argument;
 ;;;  most likely the intended behaviour would to be force a line that already contains text
@@ -98,6 +98,14 @@
             (insert (comment-padright comment-start (comment-add width)))
             (unless (string= "" comment-end)
               (insert (comment-padleft comment-end (comment-add width))))))
+         (handle-ne/nc
+          (lambda ()
+            (end-of-line)
+            (let* ((cpos (ns/eol-column))
+                   (ipos (max 40 (* 10 (+ 1 (/ cpos 10)))))    ; round to next 10'th position
+                   (pad  (- ipos cpos)))
+              (insert (make-string pad ? ))
+              (funcall insert-basic 1))))
          (delete-and-add
           (lambda (del add)
             (save-excursion
@@ -107,34 +115,29 @@
               (ns/kill-forward-whitespace)
               (funcall insert-basic add)))))
     (cond
-     ((= len 0)                       ; line is empty, simplest case
+     ((= len 0)                         ; line is empty, simplest case
       (funcall insert-basic (or pcomment 2)))
-     ((equalp tcomment 2)
+     ((equalp tcomment 2)               ; line starts with 2 semicolons
       (progn
         (funcall delete-and-add 2 3)
         (end-of-line)))
-     ((equalp tcomment 3)
+     ((equalp tcomment 3)               ; line starts with 3 semicolons
       (progn
         (if start-block
             (funcall delete-and-add 3 4)
           (funcall delete-and-add 3 2))
         (end-of-line)))
-     ((equalp tcomment 4)
+     ((equalp tcomment 4)               ; line starts with 4 semicolons
       (funcall delete-and-add 4 2)
       (end-of-line))
      ((string-match ";+ " line-contents)
       (move-to-column (match-end 0)))
      ((string-match ";+" line-contents)
       (move-to-column (match-end 0))
-      (insert " "))     
+      (if (not (equal (face-at-point) 'font-lock-string-face))
+          (insert " ")))
      ('t                                ; fallthrough that implies we're on a non-empty/non-comment line
-      (end-of-line)
-      (let* ((cpos (ns/eol-column))     
-             (ipos (max 40 (* 10 (+ 1 (/ cpos 10)))))    ; round to next 10'th position
-             (pad  (- ipos cpos)))
-        (insert (make-string pad ? ))
-        (funcall insert-basic 1)))      
-     )))
+      (funcall handle-ne/nc)))))
 
 ;;;###autoload
 (defun ns/comment-newline ()
@@ -142,9 +145,4 @@
   (interactive)
   (newline)
   (ns/comment-insert))
-
-      
-          
-
-
 
