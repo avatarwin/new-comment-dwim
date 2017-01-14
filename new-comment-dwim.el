@@ -117,17 +117,17 @@
     (cond
      ((= len 0)                         ; line is empty, simplest case
       (funcall insert-basic (or pcomment 2)))
-     ((equalp tcomment 2)               ; line starts with 2 semicolons
+     ((equal tcomment 2)               ; line starts with 2 semicolons
       (progn
         (funcall delete-and-add 2 3)
         (end-of-line)))
-     ((equalp tcomment 3)               ; line starts with 3 semicolons
+     ((equal tcomment 3)               ; line starts with 3 semicolons
       (progn
         (if start-block
             (funcall delete-and-add 3 4)
           (funcall delete-and-add 3 2))
         (end-of-line)))
-     ((equalp tcomment 4)               ; line starts with 4 semicolons
+     ((equal tcomment 4)               ; line starts with 4 semicolons
       (funcall delete-and-add 4 2)
       (end-of-line))
      ((string-match ";+ " line-contents)
