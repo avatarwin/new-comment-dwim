@@ -14,15 +14,16 @@
 ;;;  most likely the intended behaviour would to be force a line that already contains text
 ;;;  to become part of a comment block such as this.
 ;;;
-;;;   The missing case of being able to promote a 3 semicolon comment into a 4 semicolon comment
-;;;  when the 3 semicolon comment is part of a comment block at the start of the file. In
-;;;  this situation the progression of semicolons should be a ring of [2->3->4]
-;;; 
 ;;;   The code should be extended to work with 'all' programming languages by better recognising
 ;;;  non-lispy comments and using the comment-leftpad/comment-rightpad/comment-start/comment-end
 ;;;  facilities already present in emacs.
 ;;; 
 ;;; Changelog
+;;;
+;;; 20170114     Version 0.2
+;;;              - Support for 4-semicolon comment blocks when at the top of the file
+;;;              - removed code that was ultimately redundant by reusing in-comment to determine
+;;;                the status of comment in the current line as well as previous lines.
 ;;; 
 ;;; 20170113     Version 0.1
 ;;;              - Initial version
@@ -101,6 +102,7 @@
           (lambda (del add)
             (save-excursion
               (beginning-of-line)
+              (ns/kill-forward-whitespace)
               (kill-forward-chars del)
               (ns/kill-forward-whitespace)
               (funcall insert-basic add)))))
