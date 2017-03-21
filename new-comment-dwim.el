@@ -32,6 +32,17 @@
 ;;; Released under the BSD 2-clause license, see https://opensource.org/licenses/BSD-2-Clause
 ;;;
 
+
+;; Chomp function taken from elisp cookbook...
+
+(defun chomp (str)
+  "Chomp leading and tailing whitespace from STR."
+  (while (string-match "\\`\n+\\|^\\s-+\\|\\s-+$\\|\n+\\'"
+                       str)
+    (setq str (replace-match "" t t str)))
+  str)
+
+
 (defun ns/extract-line ()
   "Extract a line as undecorated text"
   (save-excursion
@@ -52,7 +63,7 @@
       (while (and is-comment
                   (> (point) start-point))
         (forward-line -1)
-        (let ((line (string-trim (ns/extract-line))))
+        (let ((line (chomp (ns/extract-line))))
           (setq is-comment (and (> (length line) 0) (string= ";" (substring line 0 1))))))
       (and is-comment (= (point) start-point)))))
 
@@ -67,7 +78,7 @@
   "Return number of comment semicolons used on previous line, or nil if previous line was not a comment"
   (save-excursion
     (beginning-of-line offset)
-    (let ((trimmed (string-trim (ns/extract-line))))
+    (let ((trimmed (chomp (ns/extract-line))))
       (cond ((and (>= (length trimmed) 4)
                   (string= (substring trimmed 0 4) ";;;;"))
              4)
@@ -91,7 +102,7 @@
          (pcomment (ns/in-comment 0))
          (tcomment (ns/in-comment nil))
          (line-contents (ns/extract-line))
-         (trimmed (string-trim line-contents))
+         (trimmed (chomp line-contents))
          (len (length trimmed))
          (insert-basic
           (lambda (width)
