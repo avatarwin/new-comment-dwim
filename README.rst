@@ -47,8 +47,5 @@ to the existing semicolons, assuming it to be an existing comment.
 License
 =======
 
-This code is released under a BSD 2-clause license.
-`See BSD 2-clause License at opensource.org <https://opensource.org/licenses/BSD-2-Clause>`_
-
-Copyright 2017 Nicola Archibald.
+This code is released under the GPL-3 license, see the file `LICENSE` for details.
 
