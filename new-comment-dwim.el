@@ -157,3 +157,4 @@
   (newline)
   (ns/comment-insert))
 
+(provide 'new-comment-dwim)
