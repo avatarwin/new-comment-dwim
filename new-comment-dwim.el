@@ -1,7 +1,7 @@
 ;;; More complex/complete comment-dwim like behaviour
 ;;; =================================================
 ;;;
-;;; Copyright 2017 Nicola Archibald
+;;; Copyright 2017-2019 Nicola Archibald
 ;;; 
 ;;; Binding M-; to ns/comment-insert and M-j to ns/comment-newline should be the most common
 ;;; use-case for this code.
@@ -20,6 +20,9 @@
 ;;; 
 ;;; Changelog
 ;;;
+;;; 20190419     Version 0.3
+;;;              - Make default comment block size configurable as ns/comment-default-size and
+;;;                ns/header-comment-default-size, defaulting to 2 and 3 as per previous version.
 ;;; 20170114     Version 0.2
 ;;;              - Support for 4-semicolon comment blocks when at the top of the file
 ;;;              - removed code that was ultimately redundant by reusing in-comment to determine
@@ -42,6 +45,17 @@
     (setq str (replace-match "" t t str)))
   str)
 
+(defcustom ns/comment-default-size 2
+  "Default comment size for new comments on empty lines, default is 2.\nValue is buffer-local, so use set-default."
+  :type 'integer
+  :group 'new-comment-dwim )
+
+(make-variable-buffer-local 'ns/comment-default-size)
+
+(defcustom ns/header-comment-default-size 3
+  "Default size for new comments at the top of the file, default is 3.\nValue is buffer-local, so use set-default."
+  :type 'integer
+  :group 'new-comment-dwim )
 
 (defun ns/extract-line ()
   "Extract a line as undecorated text"
@@ -113,7 +127,7 @@
           (lambda ()
             (end-of-line)
             (let* ((cpos (ns/eol-column))
-                   (ipos (max 40 (* 10 (+ 1 (/ cpos 10)))))    ; round to next 10'th position
+                   (ipos (max 40 (* 10 (+ 1 (/ cpos 10)))))  ; round to next 10'th position
                    (pad  (- ipos cpos)))
               (insert (make-string pad ? ))
               (funcall insert-basic 1))))
@@ -127,7 +141,9 @@
               (funcall insert-basic add)))))
     (cond
      ((= len 0)                         ; line is empty, simplest case
-      (funcall insert-basic (or pcomment 2)))
+      (funcall insert-basic (or pcomment (if start-block
+                                             ns/header-comment-default-size
+                                           ns/comment-default-size))))
      ((equal tcomment 2)               ; line starts with 2 semicolons
       (progn
         (funcall delete-and-add 2 3)
