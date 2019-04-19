@@ -32,7 +32,7 @@
 ;;;              - Initial version
 ;;; License
 ;;; 
-;;; Released under the BSD 2-clause license, see https://opensource.org/licenses/BSD-2-Clause
+;;; Released under the GPL-3 license, see the file LICENSE for details.
 ;;;
 
 
