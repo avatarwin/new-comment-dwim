@@ -57,6 +57,8 @@
   :type 'integer
   :group 'new-comment-dwim )
 
+(make-variable-buffer-local 'ns/header-comment-default-size)
+
 (defun ns/extract-line ()
   "Extract a line as undecorated text"
   (save-excursion
